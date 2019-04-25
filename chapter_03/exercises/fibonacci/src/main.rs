@@ -1,15 +1,11 @@
 use std::io;
 
-fn nth_fibonacci(n: i32) -> i32 {
-    let mut fibonacci_sum = 1;
-    if n <= 2 {
-        return n - 1;
+fn nth_fibonacci(n: usize) -> usize {
+    if n <= 1 {
+        return n;
     } else {
-        for element in 2..n - 2 {
-            fibonacci_sum += element;
-        }
+        return nth_fibonacci(n-1) + nth_fibonacci(n-2);
     }
-    return fibonacci_sum;
 }
 
 fn main() {
@@ -20,7 +16,7 @@ fn main() {
 
         io::stdin().read_line(&mut n).expect("Failed to read line");
 
-        let n: i32 = match n.trim().parse() {
+        let n: usize = match n.trim().parse() {
             Ok(num) => num,
             Err(_) => continue,
         };
