@@ -8,9 +8,8 @@ fn main() {
     let len = calculate_length(&s1);
     println!("Length of {} is {}.", s1, len);
 
-
     /* The ampersands in the above code are 'references', which allow you to
-     * refer to some value without taking ownership of the value. 
+     * refer to some value without taking ownership of the value.
      *
      *
      * Below is the new memory diagram:
@@ -19,7 +18,7 @@ fn main() {
      * ----------------   ----------------------   -----------------
      * | name | value |   | name       | value |   | index | value |
      * ----------------   ----------------------   -----------------
-     * | ptr  | --------->| ptr        | --------->|   0   |   h   | 
+     * | ptr  | --------->| ptr        | --------->|   0   |   h   |
      * ----------------   ----------------------   -----------------
      *                    | len        |   5   |   |   1   |   e   |
      *                    ----------------------   -----------------
@@ -28,24 +27,25 @@ fn main() {
      *                                             |   3   |   l   |
      *                                             -----------------
      *                                             |   4   |   o   |
-     *                                             ----------------- 
-     *                         
+     *                                             -----------------
+     *
      *
      * This way of having references as function parameters is called 'borrowing',
      * since the function is just borrowing value rather than taking ownership
      * of it.
      *
      * One cannot (or should not) modify what is borrowed in real life. Same is
-     * true in Rust. The following code produces compilation errors since the 
+     * true in Rust. The following code produces compilation errors since the
      * function is trying to edit the borrowed value.
      * */
 
     /* let s = String::from("hello"); */
-    /* change (&s); */ // Compilation error 
+    /* change (&s); */
+ // Compilation error
 
-    /* Mutable references */ 
+    /* Mutable references */
 
-    let mut s = String::from("hello"); 
+    let mut s = String::from("hello");
     change_mut_string(&mut s);
     println!("New value of s is {}", s);
 
@@ -54,12 +54,13 @@ fn main() {
     let r1 = &mut a;
     /* let r2 = &mut a; */
 
-    /* println!("r1 is {}, r2 is {}", r1, r2);*/  // Compilation error stating
-                                            // second mutable borrow occurs here
+    /* println!("r1 is {}, r2 is {}", r1, r2);*/
+ // Compilation error stating
+ // second mutable borrow occurs here
 
     println!("r1 is {}", r1);
     /* The benefit of this restriction is that Rust can prevent data races at
-     * compile time. 
+     * compile time.
      *
      * A data race is a race condition which happens when these 3 behaviors
      * occur:
@@ -72,7 +73,8 @@ fn main() {
      * mutable references, just not simulataneous ones:
      * */
 
-    { // new scope for r2, a mutable reference
+    {
+        // new scope for r2, a mutable reference
         let r2 = &mut a;
         println!("r2 is {}", r2);
     }
@@ -80,28 +82,29 @@ fn main() {
     /* Combining mutable and immutable references */
 
     /* There are some rules for combining mutable and immutable references.
-     * Consider below code. 
+     * Consider below code.
      * */
-    
+
     let mut st = String::from("hello");
 
-    let r1 = &st;       // no problem
-    let r2 = &st;       // no problem
-    /* let r3 = &mut st; */  // BIG problem
+    let r1 = &st; // no problem
+    let r2 = &st; // no problem
+                  /* let r3 = &mut st; */  // BIG problem
 
-    /* println!("{}, {}, {}", r1, r2, r3); */ // compilation error stating
-                                        // that 2 borrows occur, 1 is
-                                        // mutable and other is immutable
+    /* println!("{}, {}, {}", r1, r2, r3); */
+ // compilation error stating
+ // that 2 borrows occur, 1 is
+ // mutable and other is immutable
 
-    println!("{}, {}", r1, r2);     // compiles with no problem with a warning
+    println!("{}, {}", r1, r2); // compiles with no problem with a warning
 
-    /* We cannot have a mutable reference while we have an immutable one. 
+    /* We cannot have a mutable reference while we have an immutable one.
      * Users of immutable references do not expect the value to change
-     * suddenly. However mutiple immutable references are okay since we 
+     * suddenly. However mutiple immutable references are okay since we
      * are just reading data from them and not modifying the data.
      * */
 
-    /* How to use both a mutable and an immutable reference then? 
+    /* How to use both a mutable and an immutable reference then?
      *
      * Note: The scope of a reference starts from where it is introduced and
      * continues through the last time that reference is used.
@@ -121,18 +124,18 @@ fn main() {
     r3.push_str(" ladhani");
     println!("{}", r3);
 
-    /* In short, if a value is mutable, the immutable references to that 
-     * value should be used before creating mutable references. One can 
+    /* In short, if a value is mutable, the immutable references to that
+     * value should be used before creating mutable references. One can
      * have as many immutable references as one can have before a mutable
-     * reference, since immutable references are read-only representation 
-     * of a value. 
+     * reference, since immutable references are read-only representation
+     * of a value.
      *
      * Moreover, one cannot create multiple mutable references before using
      * those mutable references. One has to use (or modify and use) the value
      * using mutable reference before creating another one to the same valueas one can have before
      * a mutable
-     * reference, since immutable references are read-only representation 
-     * of a value. 
+     * reference, since immutable references are read-only representation
+     * of a value.
      *
      * Moreover, one cannot create multiple mutable references before using
      * those mutable references. One has to use (or modify and use) the value
@@ -149,7 +152,7 @@ fn main() {
 
     println!("{}", ref_to_nothing);
 
-    /* 
+    /*
      * Rule of References:
      *
      * 1. At any given time, you can have either 1 mutable reference or any
@@ -157,17 +160,17 @@ fn main() {
      * 2. References must always be valid.
      *
      * */
-
 }
 
-fn calculate_length(s: &String) -> usize {  // s is a reference to a String
+fn calculate_length(s: &String) -> usize {
+    // s is a reference to a String
     s.len()
-}   // Here 's' goes out of scope. But because it does not own what it refers to,
-    // nothing happens
-    
+} // Here 's' goes out of scope. But because it does not own what it refers to,
+  // nothing happens
+
 /* fn change(some_string: &String) {
     some_string.push_str(", world!"); // compilation error stating: some_string
-                                      // is a `&` reference, so the data it 
+                                      // is a `&` reference, so the data it
                                       // refers to cannot be borrowed as mutable
 } */
 
@@ -180,9 +183,10 @@ fn change_mut_string(some_string: &mut String) {
     let s = String::from("hello");  // s is a new string
 
     &s;     // we return a reference to the String, s
-} */        // Here, 's' goes out of scope and so does the reference. Its memory goes
-            // away. Rather use the below code and return just the string not 
-            // the reference
+} */
+ // Here, 's' goes out of scope and so does the reference. Its memory goes
+ // away. Rather use the below code and return just the string not
+ // the reference
 
 fn dangle() -> String {
     let s = String::from("hello");
